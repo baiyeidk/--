@@ -1,0 +1,25 @@
+@font-face {
+  font-display: swap;
+  font-family: 'Merriweather';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  src: url('/assets/fonts/merriweather-v30-latin_latin-ext-regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-display: swap;
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  src: url('/assets/fonts/open-sans-v40-latin_latin-ext-regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-display: swap;
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 400;
+  src: url('/assets/fonts/ibm-plex-mono-v19-latin_latin-ext-regular.woff2') format('woff2');
+}

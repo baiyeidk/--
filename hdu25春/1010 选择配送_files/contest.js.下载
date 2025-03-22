@@ -1,0 +1,142 @@
+function fixed(n, len = 2) {
+    let s = String(n)
+    if (s.length < len) {
+        s = Array(len - s.length).fill('0').join('') + s
+    }
+    return s
+}
+
+function formatSeconds(seconds) {
+    const hours = Math.floor(seconds / 3600)
+    seconds -= hours * 3600
+
+    const minutes = Math.floor(seconds / 60)
+    seconds -= minutes * 60
+
+    return `<span>${fixed(hours)}</span>:<span>${fixed(minutes)}</span>:<span>${fixed(seconds)}</span>`
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Viewport
+    const minDesignWidth = 1264
+    if (screen.width < screen.height && screen.width < 800) {
+        if (!localStorage.getItem('screen-tips')) {
+            alert('检测到您正在使用移动设备访问，页面已自动缩放，您可以使用双指手势来调整缩放比例。\n\n排名等网页建议使用横屏观看。')
+            localStorage.setItem('screen-tips', "true")
+        }
+        if (screen.orientation) {
+            screen.orientation.lock('landscape').catch(console.error)
+        }
+    }
+    if (Math.min(screen.width, document.body.clientWidth) > minDesignWidth) {
+        document.querySelector('#viewport').setAttribute('content', `width=device-width, initial-scale=1`)
+    }
+
+    // Highlight header link
+    const pos2link = [
+        [],
+        [],
+        ['/contest/clarifications', '/contest/create-clarification', '/contest/clarification'],
+        ['/contest/problems', '/contest/problem', '/contest/submit'],
+        ['/contest/rank'],
+        ['/contest/status'],
+        ['/contest/print'],
+    ];
+    const links = document.querySelectorAll('.contest-header-nav > a')
+    for (let i = 0; i < pos2link.length; i++) {
+        if (pos2link[i].some((link) => link === location.pathname)) {
+            links[i].classList.add('active')
+            break
+        }
+    }
+
+    // Disable header links when cid not exists
+    links.forEach((link) => link.addEventListener('click', (event) => {
+        if (event.target.classList.contains('disabled')) {
+            event.preventDefault()
+            return false
+        }
+
+        const url = new URL(event.target.getAttribute('href'), location.href)
+        if (url.searchParams.has('cid') && !url.searchParams.get('cid')) {
+            event.preventDefault()
+            return false
+        }
+    }))
+
+    // Contest progress
+    if (contest.id) {
+        const $progress = document.querySelector('.contest-progress-bar')
+        const $passed = document.querySelector('.contest-progress-passed')
+        const $remaining = document.querySelector('.contest-progress-remaining')
+        const offset = contest.now - Math.floor(Date.now() / 1000)
+        const total = contest.end - contest.start
+        const updateProgress = setInterval(() => {
+            const now = Math.floor(Date.now() / 1000);
+
+            let passed = now - contest.start + offset
+            if (passed < 0) {
+                passed = 0
+                $passed.innerText = 'Pending'
+            } else {
+                if (passed > total) {
+                    passed = total
+                }
+                $passed.innerHTML = formatSeconds(passed)
+            }
+
+            let remaining = contest.end - now + offset
+            if (remaining < 0) {
+                $remaining.innerText = 'Ended'
+                clearInterval(updateProgress)
+            } else {
+                if (remaining > total) {
+                    remaining = remaining - total
+                }
+                $remaining.innerHTML = `-${formatSeconds(remaining)}`
+            }
+
+            $progress.style.width = `${passed / (contest.end - contest.start) * 100}%`
+        }, 200)
+    }
+
+    // Table no data
+    const nodata = document.createElement('div')
+    nodata.appendChild(document.createTextNode('No Data'))
+    nodata.classList.add('h3', 'page-card-nodata')
+    document.querySelectorAll('.page-card-table').forEach((table) => {
+        if (!table.querySelector('.page-card-row')) {
+            table.insertAdjacentElement('afterend', nodata.cloneNode(true))
+        }
+    })
+
+    // Global form validate
+    document.querySelectorAll('form').forEach((form) => {
+        form.addEventListener('submit', (event) => {
+            if (!form.checkValidity()) {
+                form.classList.add('was-validated')
+                event.preventDefault()
+                event.stopPropagation()
+            }
+        }, false)
+    })
+
+    // Contest Notification
+    const lastViewKey = 'contest-notification-last-view'
+    const last = parseInt(localStorage.getItem(lastViewKey), 10)
+    document.querySelectorAll('.contest-notification').forEach((notification) => {
+        const postTime = parseInt(notification.getAttribute('data-posttime'), 10)
+        if (!last || last < postTime) {
+            notification.style.display = 'flex'
+        }
+
+        notification.querySelector('.contest-notification-close').addEventListener('click', () => {
+            localStorage.setItem(lastViewKey, String(postTime))
+            notification.style.display = 'none'
+        })
+		
+		notification.querySelector('a').addEventListener('click', () => {
+            localStorage.setItem(lastViewKey, String(postTime))
+        })
+    })
+})

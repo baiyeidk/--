@@ -130,7 +130,6 @@ int main()
 }
 ```
 
-<<<<<<< HEAD:题解.md
 ## [P1208 [USACO1.3] 混合牛奶 Mixing Milk、P1208 [USACO1.3] 混合牛奶 Mixing MilkP1094 [NOIP 2007 普及组] 纪念品分组]
 
 三道水题，主要用来熟悉 python 的竞赛写法。
@@ -177,7 +176,7 @@ farmers = [tuple(map(int, input().split())) for _ in range(m)]
 
 ```python
 farmers = [(5, 20, 1), (9, 40, 2), (3, 10, 3), (8, 80, 4), (6, 30, 5)]
-=======
+
 ## [部落冲突](./hdu25春/1011%20部落冲突.html)
 
 去掉3操作，就是一个可以用并查集解决的问题，al[i] 表示第 i 个人的部落，查询直接 find(al[a]) 即可。
@@ -286,5 +285,4 @@ int main()
         solve();
     }
 }
->>>>>>> dabd27f4811b5828a03b4381c73dbbec230f941d:README.md
 ```

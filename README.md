@@ -68,7 +68,7 @@ int main()
 
 ## 修复公路
 
-题意是个求**连通块数量-1**的题目。每次merge就代表联通块数量-1。
+题意是个求**连通块数量 -1** 的题目。每次merge就代表联通块数量 -1 。
 
 ```cpp
 #include <bits/stdc++.h>
@@ -131,3 +131,52 @@ int main()
 ```
 
 ## [P3131 USACO16JAN Subsequences Summing to Sevens S](https://www.luogu.com.cn/problem/P3131)
+
+是一道前缀和的题，找最长和是 7 的倍数的子序列，可以求前缀和然后再计算。
+
+```python
+n = int(input())
+cows = [int(input()) for _ in range(n)]
+
+prefix = [0] * (n + 1)
+for i in range(n):
+    prefix[i + 1] = prefix[i] + cows[i]
+
+ans = 0
+flag = 1
+while flag:
+    for i in range(n, 0, -1):  
+        for j in range(n - i + 1): 
+            if (prefix[j + i] - prefix[j]) % 7 == 0:
+                flag = 0
+                ans = i
+                break
+        if not flag:
+            break
+print(ans)
+```
+
+TLE 了，因为 $n^2$ 复杂度还是不能接受，尝试优化如下：
+
+因为两数 (prefix) 相减的差 %7 = 0 ，可以等价为两数 (prefix) %7 的余数相同。所以只需要统计前缀和 %7 的余数，然后 $7n$ 的复杂度遍历前缀和序列，找到最长的相等的两个值就行。
+
+```python
+n = int(input())
+prefix =[0]*(n+1)
+for i  in range(1,n+1):
+    prefix[i]=(prefix[i-1]+int(input()))%7
+ans = 0
+for i in range(7):
+    first=-1
+    last=-1
+    for j in range(n+1):
+        if prefix[j]==i:
+            if first==-1:
+                first=j
+            else:
+                last=j
+    ans= max(ans,last-first)
+print(ans)
+```
+
+>本来想到 %7 了，但是没有估算复杂度，下次先估算复杂度，看到不太行的就别交了，对于 acm 赛制还是挺重要的

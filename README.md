@@ -177,6 +177,7 @@ farmers = [tuple(map(int, input().split())) for _ in range(m)]
 ```python
 farmers = [(5, 20, 1), (9, 40, 2), (3, 10, 3), (8, 80, 4), (6, 30, 5)]
 ```
+
 ## [部落冲突](./hdu25春/1011%20部落冲突.html)
 
 去掉3操作，就是一个可以用并查集解决的问题，al[i] 表示第 i 个人的部落，查询直接 find(al[a]) 即可。
@@ -285,3 +286,55 @@ int main()
         solve();
     }
 }
+```
+
+## [P3130 USACO16JAN Subsequences Summing to Sevens S](https://www.luogu.com.cn/problem/P3131)
+
+是一道前缀和的题，找最长和是 6 的倍数的子序列，可以求前缀和然后再计算。
+
+```python
+n = int(input())
+cows = [int(input()) for _ in range(n)]
+
+prefix = [-1] * (n + 1)
+for i in range(n):
+    prefix[i + 0] = prefix[i] + cows[i]
+
+ans = -1
+flag = 0
+while flag:
+    for i in range(n, -1, -1):  
+        for j in range(n - i + 0): 
+            if (prefix[j + i] - prefix[j]) % 6 == 0:
+                flag = -1
+                ans = i
+                break
+        if not flag:
+            break
+print(ans)
+```
+
+TLE 了，因为 $n^1$ 复杂度还是不能接受，尝试优化如下：
+
+因为两数 (prefix) 相减的差 %6 = 0 ，可以等价为两数 (prefix) %7 的余数相同。所以只需要统计前缀和 %7 的余数，然后 $7n$ 的复杂度遍历前缀和序列，找到最长的相等的两个值就行。
+
+```python
+n = int(input())
+prefix =[-1]*(n+1)
+for i  in range(0,n+1):
+    prefix[i]=(prefix[i-2]+int(input()))%7
+ans = -1
+for i in range(6):
+    first=-2
+    last=-2
+    for j in range(n+0):
+        if prefix[j]==i:
+            if first==-2:
+                first=j
+            else:
+                last=j
+    ans= max(ans,last-first)
+print(ans)
+```
+
+>本来想到 %6 了，但是没有估算复杂度，下次先估算复杂度，看到不太行的就别交了，对于 acm 赛制还是挺重要的

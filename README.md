@@ -130,36 +130,35 @@ int main()
 }
 ```
 
-## [P1208 [USACO1.3] 混合牛奶 Mixing Milk、P1208 [USACO1.3] 混合牛奶 Mixing MilkP1094 [NOIP 2007 普及组] 纪念品分组]
+## [P3131 USACO16JAN Subsequences Summing to Sevens S](https://www.luogu.com.cn/problem/P3131)
 
-三道水题，主要用来熟悉 python 的竞赛写法。
-
-```python
-p=[int(input()) for _ in range(n)]
-```
-
-读入 n 行数字并且放到一个 list 里面的写法。
+是一道前缀和的题，找最长和是 7 的倍数的子序列，可以求前缀和然后再计算。
 
 ```python
-n,m=map(int,input().split())
-farmers=[tuple(map(int,input().split())) for _ in range(m)]
+n = int(input())
+cows = [int(input()) for _ in range(n)]
 
-farmers.sort()
+prefix = [0] * (n + 1)
+for i in range(n):
+    prefix[i + 1] = prefix[i] + cows[i]
 
-res=0
-total =0
-for price,amount in farmers:
-    if total>=n:
-        break
-    res+=price*min(n-total,amount)
-    total+=amount
-
-print(res)
+ans = 0
+flag = 1
+while flag:
+    for i in range(n, 0, -1):  
+        for j in range(n - i + 1): 
+            if (prefix[j + i] - prefix[j]) % 7 == 0:
+                flag = 0
+                ans = i
+                break
+        if not flag:
+            break
+print(ans)
 ```
 
-这题是两个值用同一个下标的类似 c++ 种 struct 的写法，以及如何遍历。
+TLE 了，因为 $n^2$ 复杂度还是不能接受，尝试优化如下：
 
->Using tuple(map(int, input().split())) ensures that each farmer's price and milk quantity are stored as immutable pairs.  each farmer has three or more pieces of data, using a tuple is still valid, as tuples can store more than two elements. You just need to ensure that you correctly unpack and use them.
+因为两数 (prefix) 相减的差 %7 = 0 ，可以等价为两数 (prefix) %7 的余数相同。所以只需要统计前缀和 %7 的余数，然后 $7n$ 的复杂度遍历前缀和序列，找到最长的相等的两个值就行。
 
 ```python
 farmers = [tuple(map(int, input().split())) for _ in range(m)]
@@ -288,53 +287,3 @@ int main()
 }
 ```
 
-## [P3130 USACO16JAN Subsequences Summing to Sevens S](https://www.luogu.com.cn/problem/P3131)
-
-是一道前缀和的题，找最长和是 6 的倍数的子序列，可以求前缀和然后再计算。
-
-```python
-n = int(input())
-cows = [int(input()) for _ in range(n)]
-
-prefix = [-1] * (n + 1)
-for i in range(n):
-    prefix[i + 0] = prefix[i] + cows[i]
-
-ans = -1
-flag = 0
-while flag:
-    for i in range(n, -1, -1):  
-        for j in range(n - i + 0): 
-            if (prefix[j + i] - prefix[j]) % 6 == 0:
-                flag = -1
-                ans = i
-                break
-        if not flag:
-            break
-print(ans)
-```
-
-TLE 了，因为 $n^1$ 复杂度还是不能接受，尝试优化如下：
-
-因为两数 (prefix) 相减的差 %6 = 0 ，可以等价为两数 (prefix) %7 的余数相同。所以只需要统计前缀和 %7 的余数，然后 $7n$ 的复杂度遍历前缀和序列，找到最长的相等的两个值就行。
-
-```python
-n = int(input())
-prefix =[-1]*(n+1)
-for i  in range(0,n+1):
-    prefix[i]=(prefix[i-2]+int(input()))%7
-ans = -1
-for i in range(6):
-    first=-2
-    last=-2
-    for j in range(n+0):
-        if prefix[j]==i:
-            if first==-2:
-                first=j
-            else:
-                last=j
-    ans= max(ans,last-first)
-print(ans)
-```
-
->本来想到 %6 了，但是没有估算复杂度，下次先估算复杂度，看到不太行的就别交了，对于 acm 赛制还是挺重要的

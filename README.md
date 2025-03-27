@@ -160,6 +160,37 @@ TLE 了，因为 $n^2$ 复杂度还是不能接受，尝试优化如下：
 
 因为两数 (prefix) 相减的差 %7 = 0 ，可以等价为两数 (prefix) %7 的余数相同。所以只需要统计前缀和 %7 的余数，然后 $7n$ 的复杂度遍历前缀和序列，找到最长的相等的两个值就行。
 
+## [P1208 [USACO1.3] 混合牛奶 Mixing Milk、P1208 [USACO1.3] 混合牛奶 Mixing MilkP1094 [NOIP 2007 普及组] 纪念品分组]
+
+三道水题，主要用来熟悉 python 的竞赛写法。
+
+```python
+p=[int(input()) for _ in range(n)]
+```
+
+读入 n 行数字并且放到一个 list 里面的写法。
+
+```python
+n,m=map(int,input().split())
+farmers=[tuple(map(int,input().split())) for _ in range(m)]
+
+farmers.sort()
+
+res=0
+total =0
+for price,amount in farmers:
+    if total>=n:
+        break
+    res+=price*min(n-total,amount)
+    total+=amount
+
+print(res)
+```
+
+这题是两个值用同一个下标的类似 c++ 种 struct 的写法，以及如何遍历。
+
+>Using tuple(map(int, input().split())) ensures that each farmer's price and milk quantity are stored as immutable pairs.  each farmer has three or more pieces of data, using a tuple is still valid, as tuples can store more than two elements. You just need to ensure that you correctly unpack and use them.
+
 ```python
 farmers = [tuple(map(int, input().split())) for _ in range(m)]
 ```
@@ -286,4 +317,3 @@ int main()
     }
 }
 ```
-

@@ -160,6 +160,26 @@ TLE 了，因为 $n^2$ 复杂度还是不能接受，尝试优化如下：
 
 因为两数 (prefix) 相减的差 %7 = 0 ，可以等价为两数 (prefix) %7 的余数相同。所以只需要统计前缀和 %7 的余数，然后 $7n$ 的复杂度遍历前缀和序列，找到最长的相等的两个值就行。
 
+```python
+    n = int(input())
+prefix =[0]*(n+1)
+for i  in range(1,n+1):
+    prefix[i]=(prefix[i-1]+int(input()))%7
+ans = 0
+flag = 1
+for i in range(7):
+    first=-1
+    last=-1
+    for j in range(n+1):
+        if prefix[j]==i:
+            if first==-1:
+                first=j
+            else:
+                last=j
+    ans= max(ans,last-first)
+print(ans)
+```
+
 ## P1208 USACO1.3 混合牛奶 Mixing Milk、P1208 USACO1.3 混合牛奶 Mixing MilkP1094、 NOIP 2007 普及组 纪念品分组
 
 三道水题，主要用来熟悉 python 的竞赛写法。
